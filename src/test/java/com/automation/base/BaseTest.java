@@ -1,5 +1,6 @@
 package com.automation.base;
 
+import com.automation.utils.ConfigReader;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.annotations.AfterMethod;
@@ -12,7 +13,7 @@ public class BaseTest {
   @BeforeMethod
   public void setUp() {
     driver = new ChromeDriver();
-    driver.get("https://www.saucedemo.com");
+    driver.get(ConfigReader.get("base.url"));
   }
 
   @AfterMethod
