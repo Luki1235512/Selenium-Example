@@ -15,6 +15,7 @@ public class LoginPage {
   private By usernameField = By.id("user-name");
   private By passwordField = By.id("password");
   private By loginButton = By.id("login-button");
+  private By errorMessage = By.cssSelector("[data-test='error']");
 
   public LoginPage(WebDriver driver) {
     this.wait = new WaitUtils(driver);
@@ -40,5 +41,11 @@ public class LoginPage {
     enterUsername(username);
     enterPassword(password);
     clickLogin();
+  }
+
+  public String getErrorMessage() {
+    String error = wait.waitForVisible(errorMessage).getText();
+    logger.info("Error message displayed: {}", error);
+    return error;
   }
 }

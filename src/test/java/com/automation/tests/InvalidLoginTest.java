@@ -3,7 +3,6 @@ package com.automation.tests;
 import com.automation.base.BaseTest;
 import com.automation.pages.LoginPage;
 import com.automation.utils.ConfigReader;
-import org.openqa.selenium.By;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -17,9 +16,7 @@ public class InvalidLoginTest extends BaseTest {
       ConfigReader.get("standard.password")
     );
 
-    String errorMessage = driver
-      .findElement(By.cssSelector("[data-test='error']"))
-      .getText();
+    String errorMessage = loginPage.getErrorMessage();
     Assert.assertTrue(errorMessage.contains("locked out"));
   }
 }
