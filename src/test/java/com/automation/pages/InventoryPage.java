@@ -1,9 +1,15 @@
 package com.automation.pages;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
 public class InventoryPage {
+
+  private static final Logger logger = LogManager.getLogger(
+    InventoryPage.class
+  );
 
   private WebDriver driver;
   private By pageTitle = By.className("title");
@@ -13,10 +19,14 @@ public class InventoryPage {
   }
 
   public String getPageTitleExists() {
-    return driver.findElement(pageTitle).getText();
+    String title = driver.findElement(pageTitle).getText();
+    logger.info("Inventory page title read as: {}", title);
+    return title;
   }
 
   public String getCurrentUrl() {
-    return driver.getCurrentUrl();
+    String url = driver.getCurrentUrl();
+    logger.info("Current URL: {}", url);
+    return url;
   }
 }
