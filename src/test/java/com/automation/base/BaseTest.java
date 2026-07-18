@@ -1,10 +1,10 @@
 package com.automation.base;
 
+import com.automation.listeners.ExtentTestNameListener;
 import com.automation.utils.ConfigReader;
 import com.automation.utils.ExtentManager;
+import com.automation.utils.ExtentTestManager;
 import com.aventstack.extentreports.ExtentReports;
-import com.aventstack.extentreports.ExtentTest;
-import com.aventstack.extentreports.Status;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -18,38 +18,38 @@ import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Listeners;
 
+@Listeners(ExtentTestNameListener.class)
 public class BaseTest {
 
   private static final Logger logger = LogManager.getLogger(BaseTest.class);
+  protected static ExtentReports extent = ExtentManager.getInstance();
 
   protected WebDriver driver;
-  protected static ExtentReports extent = ExtentManager.getInstance();
-  protected ExtentTest test;
 
   @BeforeMethod
   public void setUp(java.lang.reflect.Method method) {
     driver = new ChromeDriver();
     driver.get(ConfigReader.get("base.url"));
-    test = extent.createTest(method.getName());
-    logger.info("Starting test: {}", method.getName());
+    logger.info("Browser launched, navigated to base URL");
   }
 
   @AfterMethod
   public void tearDown(ITestResult result) {
     if (result.getStatus() == ITestResult.FAILURE) {
-      test.log(Status.FAIL, "Test failed: " + result.getThrowable());
       String screenshotPath = captureScreenshot(result.getName());
-      test.addScreenCaptureFromPath(screenshotPath);
+      if (screenshotPath != null) {
+        ExtentTestManager.getTest().addScreenCaptureFromPath(screenshotPath);
+      }
       logger.error("Test failed: {}", result.getName());
-    } else if (result.getStatus() == ITestResult.SUCCESS) {
-      test.log(Status.PASS, "Test passed");
-      logger.info("Test passed: {}", result.getName());
     }
 
     if (driver != null) {
       driver.quit();
     }
+
+    ExtentTestManager.unload();
   }
 
   @AfterSuite
