@@ -19,15 +19,20 @@ pipeline {
         stage('UI Tests') {
             steps {
                 sh '''
-                    docker run --rm \
-                      -v ${WORKSPACE}/target:/app/target \
-                      ${IMAGE_NAME} \
-                      mvn test -Dtest=LoginTest,InvalidLoginTest,LoginDataDrivenTest
+                    CID=$(docker create ${IMAGE_NAME} mvn test -Dtest=LoginTest,InvalidLoginTest,LoginDataDrivenTest)
+                    echo $CID > ui_container_id.txt
+                    docker start -a $CID
                 '''
             }
             post {
                 always {
-                    sh 'cp target/extent-report.html target/ui-extent-report.html || true'
+                    sh '''
+                        CID=$(cat ui_container_id.txt)
+                        mkdir -p target
+                        docker cp $CID:/app/target/extent-report.html target/ui-extent-report.html || true
+                        docker cp $CID:/app/target/screenshots target/screenshots || true
+                        docker rm $CID || true
+                    '''
                 }
             }
         }
@@ -36,17 +41,20 @@ pipeline {
             steps {
                 withCredentials([string(credentialsId: 'reqres-api-key', variable: 'REQRES_API_KEY')]) {
                     sh '''
-                        docker run --rm \
-                          -e REQRES_API_KEY=${REQRES_API_KEY} \
-                          -v ${WORKSPACE}/target:/app/target \
-                          ${IMAGE_NAME} \
-                          mvn test -Dtest=AuthApiTest,UserApiTest
+                        CID=$(docker create -e REQRES_API_KEY=${REQRES_API_KEY} ${IMAGE_NAME} mvn test -Dtest=AuthApiTest,UserApiTest)
+                        echo $CID > api_container_id.txt
+                        docker start -a $CID
                     '''
                 }
             }
             post {
                 always {
-                    sh 'cp target/extent-report.html target/api-extent-report.html || true'
+                    sh '''
+                        CID=$(cat api_container_id.txt)
+                        mkdir -p target
+                        docker cp $CID:/app/target/extent-report.html target/api-extent-report.html || true
+                        docker rm $CID || true
+                    '''
                 }
             }
         }
