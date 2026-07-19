@@ -30,4 +30,16 @@ public class ConfigReader {
     }
     return value;
   }
+
+  public static String getSecret(String envVarName) {
+    String value = System.getenv(envVarName);
+    if (value == null || value.isBlank()) {
+      throw new RuntimeException(
+        "Missing required environment variable: " +
+          envVarName +
+          ". Set it before running API tests (see README)."
+      );
+    }
+    return value;
+  }
 }
