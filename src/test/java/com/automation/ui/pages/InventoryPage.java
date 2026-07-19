@@ -1,4 +1,4 @@
-package com.automation.pages;
+package com.automation.ui.pages;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

@@ -1,8 +1,8 @@
-package com.automation.tests;
+package com.automation.ui.tests;
 
-import com.automation.base.BaseTest;
-import com.automation.pages.InventoryPage;
-import com.automation.pages.LoginPage;
+import com.automation.ui.base.BaseTest;
+import com.automation.ui.pages.InventoryPage;
+import com.automation.ui.pages.LoginPage;
 import com.automation.utils.ConfigReader;
 import org.testng.Assert;
 import org.testng.annotations.Test;

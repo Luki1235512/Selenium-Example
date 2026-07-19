@@ -1,4 +1,4 @@
-package com.automation.base;
+package com.automation.ui.base;
 
 import com.automation.utils.ConfigReader;
 import com.automation.utils.ExtentTestManager;

@@ -1,4 +1,4 @@
-package com.automation.dataproviders;
+package com.automation.ui.dataproviders;
 
 import org.testng.annotations.DataProvider;
 
