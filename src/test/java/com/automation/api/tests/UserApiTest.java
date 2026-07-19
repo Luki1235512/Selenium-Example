@@ -55,7 +55,7 @@ public class UserApiTest extends BaseApiTest {
   }
 
   @Test
-  public void getUserById_notFound_return404() {
+  public void getUserById_notFound_returns404() {
     Response response = given()
       .spec(apiSpec)
       .when()

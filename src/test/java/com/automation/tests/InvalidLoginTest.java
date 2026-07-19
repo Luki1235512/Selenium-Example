@@ -9,7 +9,7 @@ import org.testng.annotations.Test;
 public class InvalidLoginTest extends BaseTest {
 
   @Test
-  public void invalidLoginTest() {
+  public void login_withLockedOutUser_showsLockedOutError() {
     LoginPage loginPage = new LoginPage(driver);
     loginPage.login(
       ConfigReader.get("locked.username"),

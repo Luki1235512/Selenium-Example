@@ -12,7 +12,7 @@ import org.testng.annotations.Test;
 public class AuthApiTest extends BaseApiTest {
 
   @Test
-  public void login_withMissingPassword_return400() {
+  public void login_withMissingPassword_returns400() {
     Map<String, Object> payload = new HashMap<>();
     payload.put("email", "eve.holt@reqres.in");
 

@@ -10,7 +10,7 @@ import org.testng.annotations.Test;
 public class LoginTest extends BaseTest {
 
   @Test
-  public void validLoginTest() {
+  public void login_withValidCredentials_navigatesToInventory() {
     LoginPage loginPage = new LoginPage(driver);
     loginPage.login(
       ConfigReader.get("standard.username"),
