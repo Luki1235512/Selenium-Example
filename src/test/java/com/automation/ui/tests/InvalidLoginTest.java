@@ -10,7 +10,7 @@ public class InvalidLoginTest extends BaseTest {
 
   @Test
   public void login_withLockedOutUser_showsLockedOutError() {
-    LoginPage loginPage = new LoginPage(driver);
+    LoginPage loginPage = new LoginPage(getDriver());
     loginPage.login(
       ConfigReader.get("locked.username"),
       ConfigReader.get("standard.password")

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Selenium-Example Suite" parallel="methods" thread-count="2">
+
+  <test name="UI Tests">
+    <classes>
+      <class name="com.automation.ui.tests.LoginTest" />
+      <class name="com.automation.ui.tests.InvalidLoginTest" />
+      <class name="com.automation.ui.tests.LoginDataDrivenTest" />
+    </classes>
+  </test>
+
+  <test name="API Tests">
+    <classes>
+      <class name="com.automation.api.tests.AuthApiTest" />
+      <class name="com.automation.api.tests.UserApiTest" />
+    </classes>
+  </test>
+
+</suite>

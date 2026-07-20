@@ -16,11 +16,11 @@ public class LoginDataDrivenTest extends BaseTest {
     dataProviderClass = LoginDataProvider.class
   )
   public void loginTest(LoginTestData data) {
-    LoginPage loginPage = new LoginPage(driver);
+    LoginPage loginPage = new LoginPage(getDriver());
     loginPage.login(data.username, data.password);
 
     if (data.expectedSuccess) {
-      InventoryPage inventoryPage = new InventoryPage(driver);
+      InventoryPage inventoryPage = new InventoryPage(getDriver());
       Assert.assertEquals(
         inventoryPage.getCurrentUrl(),
         ConfigReader.get("base.url") + "/inventory.html"

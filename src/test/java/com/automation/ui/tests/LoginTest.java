@@ -11,13 +11,13 @@ public class LoginTest extends BaseTest {
 
   @Test
   public void login_withValidCredentials_navigatesToInventory() {
-    LoginPage loginPage = new LoginPage(driver);
+    LoginPage loginPage = new LoginPage(getDriver());
     loginPage.login(
       ConfigReader.get("standard.username"),
       ConfigReader.get("standard.password")
     );
 
-    InventoryPage inventoryPage = new InventoryPage(driver);
+    InventoryPage inventoryPage = new InventoryPage(getDriver());
 
     Assert.assertEquals(
       inventoryPage.getCurrentUrl(),

@@ -4,7 +4,7 @@ import org.testng.annotations.DataProvider;
 
 public class LoginDataProvider {
 
-  @DataProvider(name = "loginCredentials")
+  @DataProvider(name = "loginCredentials", parallel = true)
   public static Object[][] loginCredentials() {
     return new Object[][] {
       {

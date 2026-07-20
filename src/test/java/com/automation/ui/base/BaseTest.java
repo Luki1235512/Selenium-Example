@@ -1,5 +1,6 @@
 package com.automation.ui.base;
 
+import com.automation.ui.factory.DriverFactory;
 import com.automation.utils.ConfigReader;
 import com.automation.utils.ExtentTestManager;
 import java.io.File;
@@ -10,8 +11,6 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -19,19 +18,27 @@ import org.testng.annotations.BeforeMethod;
 public class BaseTest {
 
   private static final Logger logger = LogManager.getLogger(BaseTest.class);
-  protected WebDriver driver;
+  private static final ThreadLocal<WebDriver> driverThreadLocal =
+    new ThreadLocal<>();
+
+  protected WebDriver getDriver() {
+    return driverThreadLocal.get();
+  }
 
   @BeforeMethod
-  public void setUp(java.lang.reflect.Method method) {
-    ChromeOptions options = new ChromeOptions();
-    if (Boolean.parseBoolean(ConfigReader.get("headless"))) {
-      options.addArguments("--headless=new");
-      options.addArguments("--no-sandbox");
-      options.addArguments("--disable-dev-shm-usage");
-    }
-    driver = new ChromeDriver(options);
-    driver.get(ConfigReader.get("base.url"));
-    logger.info("Browser launched, navigated to base URL");
+  public void setUp() {
+    String browser = ConfigReader.get("browser");
+    boolean headless = Boolean.parseBoolean(ConfigReader.get("headless"));
+
+    WebDriver driver = DriverFactory.createDriver(browser, headless);
+    driverThreadLocal.set(driver);
+
+    getDriver().get(ConfigReader.get("base.url"));
+    logger.info(
+      "Browser [{}] launched on thread [{}], navigated to base URL",
+      browser,
+      Thread.currentThread().threadId()
+    );
   }
 
   @AfterMethod
@@ -44,8 +51,8 @@ public class BaseTest {
       logger.error("Test failed: {}", result.getName());
     }
 
-    if (driver != null) {
-      driver.quit();
+    if (getDriver() != null) {
+      getDriver().quit();
     }
 
     ExtentTestManager.unload();
@@ -53,7 +60,7 @@ public class BaseTest {
 
   private String captureScreenshot(String testName) {
     try {
-      TakesScreenshot ts = (TakesScreenshot) driver;
+      TakesScreenshot ts = (TakesScreenshot) getDriver();
       File source = ts.getScreenshotAs(OutputType.FILE);
       String relativePath = "screenshots/" + testName + ".png";
       Files.createDirectories(Paths.get("target/screenshots"));
