@@ -17,22 +17,34 @@ pipeline {
         }
 
         stage('UI Tests') {
-            steps {
-                sh '''
-                    CID=$(docker create ${IMAGE_NAME} mvn test -Dtest=LoginTest,InvalidLoginTest,LoginDataDrivenTest)
-                    echo $CID > ui_container_id.txt
-                    docker start -a $CID
-                '''
-            }
-            post {
-                always {
-                    sh '''
-                        CID=$(cat ui_container_id.txt)
-                        mkdir -p target
-                        docker cp $CID:/app/target/extent-report.html target/ui-extent-report.html || true
-                        docker cp $CID:/app/target/screenshots target/screenshots || true
-                        docker rm $CID || true
-                    '''
+            matrix {
+                axes {
+                    axis {
+                        name 'BROWSER'
+                        values 'chrome', 'firefox'
+                    }
+                }
+                stages {
+                    stage('Run') {
+                        steps {
+                            sh '''
+                                CID=$(docker create ${IMAGE_NAME} mvn test -DsuiteXmlFile=testng.xml -Dbrowser=${BROWSER} -Dtest=LoginTest,InvalidLoginTest,LoginDataDrivenTest)
+                                echo $CID > ui_container_id_${BROWSER}.txt
+                                docker start -a $CID
+                            '''
+                        }
+                        post {
+                            always {
+                                sh '''
+                                    CID=$(cat ui_container_id_${BROWSER}.txt)
+                                    mkdir -p target
+                                    docker cp $CID:/app/target/extent-report.html target/ui-extent-report-${BROWSER}.html || true
+                                    docker cp $CID:/app/target/screenshots target/screenshots-${BROWSER} || true
+                                    docker rm $CID || true
+                                '''
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -41,7 +53,7 @@ pipeline {
             steps {
                 withCredentials([string(credentialsId: 'reqres-api-key', variable: 'REQRES_API_KEY')]) {
                     sh '''
-                        CID=$(docker create -e REQRES_API_KEY=${REQRES_API_KEY} ${IMAGE_NAME} mvn test -Dtest=AuthApiTest,UserApiTest)
+                        CID=$(docker create -e REQRES_API_KEY=${REQRES_API_KEY} ${IMAGE_NAME} mvn test -DsuiteXmlFile=testng.xml -Dtest=AuthApiTest,UserApiTest)
                         echo $CID > api_container_id.txt
                         docker start -a $CID
                     '''
@@ -62,8 +74,8 @@ pipeline {
 
     post {
         always {
-            archiveArtifacts artifacts: 'target/ui-extent-report.html,target/api-extent-report.html', allowEmptyArchive: true
-            archiveArtifacts artifacts: 'target/screenshots/**', allowEmptyArchive: true
+            archiveArtifacts artifacts: 'target/ui-extent-report-*.html,target/api-extent-report.html', allowEmptyArchive: true
+            archiveArtifacts artifacts: 'target/screenshots-*/**', allowEmptyArchive: true
             sh 'docker rmi ${IMAGE_NAME} || true'
         }
     }
