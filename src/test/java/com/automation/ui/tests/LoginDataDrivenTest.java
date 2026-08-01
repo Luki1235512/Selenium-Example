@@ -1,5 +1,6 @@
 package com.automation.ui.tests;
 
+import com.automation.testgroups.TestGroups;
 import com.automation.ui.base.BaseTest;
 import com.automation.ui.dataproviders.LoginDataProvider;
 import com.automation.ui.dataproviders.LoginTestData;
@@ -13,7 +14,8 @@ public class LoginDataDrivenTest extends BaseTest {
 
   @Test(
     dataProvider = "loginCredentials",
-    dataProviderClass = LoginDataProvider.class
+    dataProviderClass = LoginDataProvider.class,
+    groups = { TestGroups.REGRESSION, TestGroups.UI }
   )
   public void loginTest(LoginTestData data) {
     LoginPage loginPage = new LoginPage(getDriver());

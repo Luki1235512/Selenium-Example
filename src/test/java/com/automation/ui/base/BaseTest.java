@@ -25,7 +25,7 @@ public class BaseTest {
     return driverThreadLocal.get();
   }
 
-  @BeforeMethod
+  @BeforeMethod(alwaysRun = true)
   public void setUp() {
     String browser = ConfigReader.get("browser");
     boolean headless = Boolean.parseBoolean(ConfigReader.get("headless"));
@@ -41,7 +41,7 @@ public class BaseTest {
     );
   }
 
-  @AfterMethod
+  @AfterMethod(alwaysRun = true)
   public void tearDown(ITestResult result) {
     if (result.getStatus() == ITestResult.FAILURE) {
       String screenshotPath = captureScreenshot(result.getName());

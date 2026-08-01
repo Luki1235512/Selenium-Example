@@ -6,6 +6,7 @@ import com.automation.api.assertions.ApiAssertions;
 import com.automation.api.base.BaseApiTest;
 import com.automation.api.models.LoginResponse;
 import com.automation.api.models.RegisterResponse;
+import com.automation.testgroups.TestGroups;
 import com.automation.utils.ConfigReader;
 import io.restassured.response.Response;
 import java.util.HashMap;
@@ -15,7 +16,7 @@ import org.testng.annotations.Test;
 
 public class AuthApiTest extends BaseApiTest {
 
-  @Test
+  @Test(groups = { TestGroups.REGRESSION, TestGroups.API })
   public void login_withMissingPassword_returns400() {
     Map<String, Object> payload = new HashMap<>();
     payload.put("email", ConfigReader.get("demo.email"));
@@ -33,7 +34,7 @@ public class AuthApiTest extends BaseApiTest {
     ApiAssertions.assertFieldPresent(response, "error");
   }
 
-  @Test
+  @Test(groups = { TestGroups.SMOKE, TestGroups.API })
   public void login_withValidCredentials_returnsToken() {
     Map<String, Object> payload = new HashMap<>();
     payload.put("email", ConfigReader.get("demo.email"));
@@ -57,7 +58,7 @@ public class AuthApiTest extends BaseApiTest {
     );
   }
 
-  @Test
+  @Test(groups = { TestGroups.REGRESSION, TestGroups.API })
   public void register_withValidCredentials_returnsToken() {
     Map<String, Object> payload = new HashMap<>();
     payload.put("email", ConfigReader.get("demo.email"));

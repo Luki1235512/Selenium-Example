@@ -1,5 +1,6 @@
 package com.automation.ui.tests;
 
+import com.automation.testgroups.TestGroups;
 import com.automation.ui.base.BaseTest;
 import com.automation.ui.pages.LoginPage;
 import com.automation.utils.ConfigReader;
@@ -8,7 +9,7 @@ import org.testng.annotations.Test;
 
 public class InvalidLoginTest extends BaseTest {
 
-  @Test
+  @Test(groups = { TestGroups.REGRESSION, TestGroups.UI })
   public void login_withLockedOutUser_showsLockedOutError() {
     LoginPage loginPage = new LoginPage(getDriver());
     loginPage.login(

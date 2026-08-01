@@ -1,5 +1,6 @@
 package com.automation.ui.tests;
 
+import com.automation.testgroups.TestGroups;
 import com.automation.ui.base.BaseTest;
 import com.automation.ui.pages.InventoryPage;
 import com.automation.ui.pages.LoginPage;
@@ -9,7 +10,7 @@ import org.testng.annotations.Test;
 
 public class LoginTest extends BaseTest {
 
-  @Test
+  @Test(groups = { TestGroups.SMOKE, TestGroups.UI })
   public void login_withValidCredentials_navigatesToInventory() {
     LoginPage loginPage = new LoginPage(getDriver());
     loginPage.login(

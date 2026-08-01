@@ -8,6 +8,7 @@ import com.automation.api.fixtures.UserFixtures;
 import com.automation.api.models.LegacyMutationResponse;
 import com.automation.api.models.LegacyUserListResponse;
 import com.automation.api.models.LegacyUserResponse;
+import com.automation.testgroups.TestGroups;
 import io.restassured.response.Response;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +19,7 @@ public class UserApiTest extends BaseApiTest {
 
   private static final int EXISTING_USER_ID = 2;
 
-  @Test
+  @Test(groups = { TestGroups.SMOKE, TestGroups.API })
   public void getUserList_returnsPaginatedUsers() {
     Response response = given()
       .spec(apiSpec)
@@ -40,7 +41,7 @@ public class UserApiTest extends BaseApiTest {
     Assert.assertEquals(body.getPage(), 1);
   }
 
-  @Test
+  @Test(groups = { TestGroups.REGRESSION, TestGroups.API })
   public void getUserById_returnsSingleUser() {
     Response response = given()
       .spec(apiSpec)
@@ -57,7 +58,7 @@ public class UserApiTest extends BaseApiTest {
     Assert.assertNotNull(body.getData().getEmail());
   }
 
-  @Test
+  @Test(groups = { TestGroups.REGRESSION, TestGroups.API })
   public void getUserById_notFound_returns404() {
     Response response = given()
       .spec(apiSpec)
@@ -70,7 +71,7 @@ public class UserApiTest extends BaseApiTest {
     ApiAssertions.assertStatusCode(response, 404);
   }
 
-  @Test
+  @Test(groups = { TestGroups.REGRESSION, TestGroups.API })
   public void createUser_returnsCreatedResourceWithId() {
     Map<String, Object> payload = new HashMap<>();
     payload.put("name", "morpheus");
@@ -95,7 +96,7 @@ public class UserApiTest extends BaseApiTest {
     );
   }
 
-  @Test
+  @Test(groups = { TestGroups.REGRESSION, TestGroups.API })
   public void updateUser_returnsUpdatedTimestamp() {
     int fixtureId = UserFixtures.freshMutableUserId();
 
@@ -121,7 +122,7 @@ public class UserApiTest extends BaseApiTest {
     );
   }
 
-  @Test
+  @Test(groups = { TestGroups.REGRESSION, TestGroups.API })
   public void deleteUser_returnsNoContent() {
     int fixtureId = UserFixtures.freshMutableUserId();
 

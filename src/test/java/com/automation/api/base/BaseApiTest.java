@@ -8,7 +8,7 @@ public class BaseApiTest {
 
   protected RequestSpecification apiSpec;
 
-  @BeforeClass
+  @BeforeClass(alwaysRun = true)
   public void setUpApiClient() {
     apiSpec = ApiClient.getSpec();
   }

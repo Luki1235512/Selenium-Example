@@ -7,9 +7,9 @@ import io.restassured.specification.RequestSpecification;
 
 public class ApiClient {
 
-  private static RequestSpecification requestSpec;
+  private static volatile RequestSpecification requestSpec;
 
-  public static RequestSpecification getSpec() {
+  public static synchronized RequestSpecification getSpec() {
     if (requestSpec == null) {
       requestSpec = new RequestSpecBuilder()
         .setBaseUri(ConfigReader.get("api.base.url"))
