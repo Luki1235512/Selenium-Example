@@ -19,7 +19,17 @@ public class ExtentTestNameListener implements ITestListener {
 
   @Override
   public void onTestSuccess(ITestResult result) {
-    ExtentTestManager.getTest().log(Status.PASS, "Test passed");
+    Integer retryAttempt = (Integer) result.getAttribute("retryAttempt");
+    if (retryAttempt != null && retryAttempt > 0) {
+      ExtentTestManager.getTest().log(
+        Status.WARNING,
+        "Test passed after " +
+          retryAttempt +
+          " retry attempt(s) — flagged as flaky"
+      );
+    } else {
+      ExtentTestManager.getTest().log(Status.PASS, "Test passed");
+    }
   }
 
   @Override
