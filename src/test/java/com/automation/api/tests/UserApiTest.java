@@ -4,6 +4,7 @@ import static io.restassured.RestAssured.given;
 
 import com.automation.api.assertions.ApiAssertions;
 import com.automation.api.base.BaseApiTest;
+import com.automation.api.fixtures.UserFixtures;
 import com.automation.api.models.LegacyMutationResponse;
 import com.automation.api.models.LegacyUserListResponse;
 import com.automation.api.models.LegacyUserResponse;
@@ -14,6 +15,8 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 public class UserApiTest extends BaseApiTest {
+
+  private static final int EXISTING_USER_ID = 2;
 
   @Test
   public void getUserList_returnsPaginatedUsers() {
@@ -42,7 +45,7 @@ public class UserApiTest extends BaseApiTest {
     Response response = given()
       .spec(apiSpec)
       .when()
-      .get("/api/users/{id}", 2)
+      .get("/api/users/{id}", EXISTING_USER_ID)
       .then()
       .extract()
       .response();
@@ -94,6 +97,8 @@ public class UserApiTest extends BaseApiTest {
 
   @Test
   public void updateUser_returnsUpdatedTimestamp() {
+    int fixtureId = UserFixtures.freshMutableUserId();
+
     Map<String, Object> payload = new HashMap<>();
     payload.put("name", "morpheus");
     payload.put("job", "zion resident");
@@ -102,7 +107,7 @@ public class UserApiTest extends BaseApiTest {
       .spec(apiSpec)
       .body(payload)
       .when()
-      .put("/api/users/{id}", 2)
+      .put("/api/users/{id}", fixtureId)
       .then()
       .extract()
       .response();
@@ -118,10 +123,12 @@ public class UserApiTest extends BaseApiTest {
 
   @Test
   public void deleteUser_returnsNoContent() {
+    int fixtureId = UserFixtures.freshMutableUserId();
+
     given()
       .spec(apiSpec)
       .when()
-      .delete("/api/users/{id}", 2)
+      .delete("/api/users/{id}", fixtureId)
       .then()
       .statusCode(204);
   }
