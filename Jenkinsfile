@@ -18,11 +18,13 @@ pipeline {
 
         stage('Smoke Tests') {
             steps {
-                sh '''
-                    CID=$(docker create ${IMAGE_NAME} mvn test -Dgroups=smoke)
-                    echo $CID > smoke_container_id.txt
-                    docker start -a $CID
-                '''
+                withCredentials([string(credentialsId: 'reqres-api-key', variable: 'REQRES_API_KEY')]) {
+                    sh '''
+                        CID=$(docker create -e REQRES_API_KEY=${REQRES_API_KEY} ${IMAGE_NAME} mvn test -Dgroups=smoke)
+                        echo $CID > smoke_container_id.txt
+                        docker start -a $CID
+                    '''
+                }
             }
             post {
                 always {
