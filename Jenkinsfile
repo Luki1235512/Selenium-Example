@@ -16,6 +16,26 @@ pipeline {
             }
         }
 
+        stage('Smoke Tests') {
+            steps {
+                sh '''
+                    CID=$(docker create ${IMAGE_NAME} mvn test -Dgroups=smoke)
+                    echo $CID > smoke_container_id.txt
+                    docker start -a $CID
+                '''
+            }
+            post {
+                always {
+                    sh '''
+                        CID=$(cat smoke_container_id.txt)
+                        mkdir -p target
+                        docker cp $CID:/app/target/extent-report.html target/smoke-extent-report.html || true
+                        docker rm $CID || true
+                    '''
+                }
+            }
+        }
+
         stage('UI Tests') {
             matrix {
                 axes {
@@ -74,7 +94,7 @@ pipeline {
 
     post {
         always {
-            archiveArtifacts artifacts: 'target/ui-extent-report-*.html,target/api-extent-report.html', allowEmptyArchive: true
+            archiveArtifacts artifacts: 'target/smoke-extent-report.html,target/ui-extent-report-*.html,target/api-extent-report.html', allowEmptyArchive: true
             archiveArtifacts artifacts: 'target/screenshots-*/**', allowEmptyArchive: true
             sh 'docker rmi ${IMAGE_NAME} || true'
         }
