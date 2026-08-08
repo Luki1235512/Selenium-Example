@@ -16,6 +16,27 @@ pipeline {
             }
         }
 
+        stage('Static Analysis') {
+            steps {
+                sh '''
+                    CID=$(docker create ${IMAGE_NAME} mvn checkstyle:check spotbugs:check)
+                    echo $CID > static_analysis_container_id.txt
+                    docker start -a $CID
+                '''
+            }
+            post {
+                always {
+                    sh '''
+                        CID=$(cat static_analysis_container_id.txt)
+                        mkdir -p target
+                        docker cp $CID:/app/target/checkstyle-result.xml target/checkstyle-result.xml || true
+                        docker cp $CID:/app/target/spotbugsXml.xml target/spotbugs-result.xml || true
+                        docker rm $CID || true
+                    '''
+                }
+            }
+        }
+
         stage('Smoke Tests') {
             steps {
                 withCredentials([string(credentialsId: 'reqres-api-key', variable: 'REQRES_API_KEY')]) {
@@ -96,7 +117,7 @@ pipeline {
 
     post {
         always {
-            archiveArtifacts artifacts: 'target/smoke-extent-report.html,target/ui-extent-report-*.html,target/api-extent-report.html', allowEmptyArchive: true
+            archiveArtifacts artifacts: 'target/smoke-extent-report.html,target/ui-extent-report-*.html,target/api-extent-report.html,target/checkstyle-result.xml,target/spotbugs-result.xml', allowEmptyArchive: true
             archiveArtifacts artifacts: 'target/screenshots-*/**', allowEmptyArchive: true
             sh 'docker rmi ${IMAGE_NAME} || true'
         }

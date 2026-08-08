@@ -9,10 +9,9 @@ public class ConfigReader {
   private static Properties properties;
 
   static {
-    try {
-      String path = "src/test/resources/config.properties";
-      FileInputStream fis = new FileInputStream(path);
-      properties = new Properties();
+    String path = "src/test/resources/config.properties";
+    properties = new Properties();
+    try (FileInputStream fis = new FileInputStream(path)) {
       properties.load(fis);
     } catch (IOException e) {
       throw new RuntimeException(

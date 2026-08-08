@@ -9,10 +9,15 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class WaitUtils {
 
+  private static final int DEFAULT_TIMEOUT_SECONDS = 10;
+
   private WebDriverWait wait;
 
   public WaitUtils(WebDriver driver) {
-    this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+    this.wait = new WebDriverWait(
+      driver,
+      Duration.ofSeconds(DEFAULT_TIMEOUT_SECONDS)
+    );
   }
 
   public WebElement waitForVisible(By locator) {
